@@ -8,13 +8,10 @@ library(doParallel)
 # Data Import and Cleaning
 gss_data <- read_spss("../data/GSS2016.sav") 
 gss_tbl <- zap_missing(gss_data) %>% 
-  rename(workhours =  MOSTHRS) %>% #changed to MOSTHRS variable per class demo
+  rename(workhours =  MOSTHRS) %>%
   drop_na(workhours) %>%
-  select(workhours, which(colMeans(is.na(gss_data)) <= 0.25), -HRS1, -HRS2, -USUALHRS, -LEASTHRS, -SETHRS) %>% #removed all other references to work hours from code book
+  select(workhours, which(colMeans(is.na(gss_data)) <= 0.25), -HRS1, -HRS2, -USUALHRS, -LEASTHRS, -SETHRS) %>%
   mutate(workhours = as.numeric(workhours))
-
-# Visualization
-histogram(gss_tbl$workhours, main = "Distribution of workhours")
 
 # Machine Learning Models
 set.seed(25)
@@ -106,9 +103,9 @@ gb_time_original <- system.time({
 })
 
 ## Parallelization
-detectCores() #detect the number of cores on laptop #detectcores() - 1, just in case
+detectCores()
 ### OLS Regression Model
-local_cluster <- makeCluster(7)
+local_cluster <- makeCluster(10) #spreading across 10 cluster
 registerDoParallel(local_cluster)
 ols_time_parallel <- system.time({
   linear_model <- train(
@@ -196,18 +193,18 @@ registerDoSEQ()
 ## Variables
 model_list <- list(Linear = linear_model, ElasticNet = en_model, RandomForest = rf_model, GradientBoosting = gb_model)
 results <- summary(resamples(model_list), metric="Rsquared")
+results
+
 cv_rsq <- results$statistics$Rsquared[,"Mean"]
 ho_rsq <- c(r2_linear_holdout, r2_en_holdout, r2_rf_holdout, r2_gb_holdout)
-original <- c(ols_time_original[3], en_time_original[3], rf_time_original[3], gb_time_original[3]) # 3 = elapsed time within system.time() output
+original <- c(ols_time_original[3], en_time_original[3], rf_time_original[3], gb_time_original[3])
 parallelized <-c(ols_time_parallel[3], en_time_parallel[3], rf_time_parallel[3], gb_time_parallel[3])
-## Model Visualization
-dotplot(resamples(model_list), metric="Rsquared", main = "10-Fold CV Rsquared")
 
 ## Tables
-table1_tbl <- tibble(algo = results$models, cv_rsq, ho_rsq) %>%
+table3_tbl <- tibble(algo = results$models, cv_rsq, ho_rsq) %>%
   mutate(cv_rsq = str_remove(format(round(cv_rsq, 2), nsmall = 2), "^0"),
          ho_rsq = str_remove(format(round(ho_rsq, 2), nsmall = 2), "^0"))
-table1_tbl
+write.csv(table3_tbl, "table3.csv")
 
-table2_tbl <- tibble(model = model_list, original, parallelized)
-table2_tbl
+table4_tbl <- tibble(model = model_list, supercomputer = original, "supercomputer-10" = parallelized)
+write.csv(table4_tbl, "table4.csv")
