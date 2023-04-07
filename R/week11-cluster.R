@@ -105,7 +105,7 @@ gb_time_original <- system.time({
 ## Parallelization
 detectCores()
 ### OLS Regression Model
-local_cluster <- makeCluster(10) #spreading across 10 cluster
+local_cluster <- makeCluster(16) #spreading across 16! Same as in batch request.
 registerDoParallel(local_cluster)
 ols_time_parallel <- system.time({
   linear_model <- train(
