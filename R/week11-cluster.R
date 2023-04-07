@@ -6,7 +6,7 @@ library(haven)
 library(doParallel)
 
 # Data Import and Cleaning
-gss_data <- read_spss("../data/GSS2016.sav") 
+gss_data <- read_spss("GSS2016.sav") 
 gss_tbl <- zap_missing(gss_data) %>% 
   rename(workhours =  MOSTHRS) %>%
   drop_na(workhours) %>%
