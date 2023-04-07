@@ -7,12 +7,11 @@ library(haven)
 # Data Import and Cleaning
 gss_data <- read_spss("../data/GSS2016.sav") 
 gss_tbl <- zap_missing(gss_data) %>% 
-  rename(workhours = mosthrs) %>%
+  rename(workhours =  MOSTHRS) %>% #changed to MOSTHRS variable per class instruction
   drop_na(workhours) %>%
-  select(workhours, which(colMeans(is.na(gss_data)) <= 0.25), -HRS1) %>%
+  select(workhours, which(colMeans(is.na(gss_data)) <= 0.25), -HRS1, -HRS2, -USUALHRS, -LEASTHRS, -SETHRS) %>% #removed all other referneces to work hours from codebook
   mutate(workhours = as.numeric(workhours))
 
-#Visualization
 histogram(gss_tbl$workhours, main = "Distribution of workhours")
 
 # Machine Learning Models
