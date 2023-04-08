@@ -207,3 +207,13 @@ write_csv(table3_tbl, "table3.csv")
 
 table4_tbl <- tibble(algo = results$models, supercomputer = original, 'supercomputer-12' = parallelized)
 write_csv(table4_tbl, "table4.csv")
+
+## Questions
+### 1. Which models benefited most from moving to the supercomputer and why?
+### The Elastic Net, Random Forest, and Gradient Boosting models all benefited by moving to the supercomputer. In terms of the raw time required for each analysis, the Gradient Boosting model benefited the most. However, all of these models benefited from the additional resources, including the additional cores, made available by using the supercomputer. Complex tasks and configurations were able to be parsed and run simultaneously across additional virtual cores. This resulted in a faster time to completion, more so than even the parallelized version in the previous analysis. 
+
+### 2. What is the relationship between time and the number of cores used?
+### Generally speaking, the more cores used, the less time an analysis will take. However, there is a communication cost between cores to consider, particularly when simple models or strictly-sequential tasks are needed. In these instances, when a single core quickly completes a task on its own, coordinating these additional cores will actually increase the time to completion, as was the case for the original lm model. 
+
+### 3. If your supervisor asked you to pick a model for use in a production model, would you recommend using the supercomputer and why? Consider all four tables when providing an answer.
+### Again, not withstanding any changes in context or assumptions, like the user population having VPN access to the supercomputer and stable internet connection or the number of other jobs on the supercomputer, I would recommend that we run the random forest model on our supercomputer, using the 12, virtual core configuration. This still maximizes our prediction capability, as measured by R-squared, and also reduces the run time by a significant amount. Further, if desired and the resources were available, we could maximize this efficiency by increasing the number of cores used and their memory to make these predictions even faster, again assuming we had access to these additional resources in our company. 

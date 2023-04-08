@@ -10,11 +10,11 @@ gss_data <- read_spss("../data/GSS2016.sav")
 gss_tbl <- zap_missing(gss_data) %>% 
   rename(workhours =  MOSTHRS) %>% #changed to MOSTHRS variable per class demo
   drop_na(workhours) %>%
-  select(workhours, which(colMeans(is.na(gss_data)) <= 0.25), -HRS1, -HRS2, -USUALHRS, -LEASTHRS, -SETHRS) %>% #removed all other references to work hours from code book
+  select(workhours, which(colMeans(is.na(gss_data)) <= 0.25), -HRS1, -HRS2, -USUALHRS, -LEASTHRS, -SETHRS) %>% #removed all other references to work hours from code book, to be safe
   mutate(workhours = as.numeric(workhours))
 
 # Visualization
-histogram(gss_tbl$workhours, main = "Distribution of workhours")
+histogram(gss_tbl$workhours, main = "Distribution of workhours") #added a title
 
 # Machine Learning Models
 set.seed(25)
@@ -23,7 +23,7 @@ train_tbl <- gss_tbl[index, ]
 holdout_tbl <- gss_tbl[-index, ]
 fold_indices = createFolds(train_tbl$workhours, k = 10)
 
-## Original Single Core
+## Original Core
 ### OLS Regression Model
 ols_time_original <- system.time({
   linear_model <- train(
@@ -106,9 +106,9 @@ gb_time_original <- system.time({
 })
 
 ## Parallelization
-detectCores() #detect the number of cores on laptop #detectcores() - 1, just in case
-local_cluster <- makeCluster(7)
-registerDoParallel(local_cluster)
+detectCores() #detect the number of cores on laptop
+local_cluster <- makeCluster(7) #created 7 cores, #detectcores() - 1, just in case
+registerDoParallel(local_cluster) #Dividing tasks across all 7 cores
 ### OLS Regression Model
 ols_time_parallel <- system.time({
   linear_model <- train(
@@ -189,8 +189,8 @@ gb_time_parallel <- system.time({
   r2_gb_holdout <- cor(holdout_tbl$workhours, gb_predict)^2
   r2_gb_holdout
 })
-stopCluster(local_cluster)
-registerDoSEQ()
+stopCluster(local_cluster) #closes clusters
+registerDoSEQ() #back to original setup
 
 # Publication
 ## Variables
@@ -211,3 +211,13 @@ table1_tbl
 
 table2_tbl <- tibble('algo' = results$models, original = original, parallelized)
 table2_tbl
+
+## Questions
+### 1. Which models benefited most from parallelization and why?
+### The Elastic Net and Gradient Boosting models benefited the most from parallelization, cutting the analysis time in half and by about 2/3, respectively. For each of these models, different parameter configurations were able to evaluated concurrently on different cores, as each model was not dependent on the last. Notably, the random forest model using "ranger" did not benefit much. Perhaps, this was due to my own, idiosyncratic computer settings, which analyzed the random forest model across all 8 cores by default, or perhaps the default settings for the ranger package itself.
+
+### 2. How big was the difference between the fastest and slowest parallelized model? Why?
+### The slowest parallelized model was the gradient boosting model, requiring a few minutes, while the fastest was the elastic net model, requiring about 3 minutes. The elastic net model has fewer hyperparameters to test, and therefore fewer overall configurations to test. 
+
+### 3. If your supervisor asked you to pick a model for use in a production model, which would you recommend and why? Consider both Table 1 and Table 2 when providing an answer.
+### If I was asked to create a production model for this model specifically, I would first ask for additional context and check a few assumptions. Assuming that context isn't relevant, and assuming not everyone will use the same hardware as I am, I would recommend the parallelized random forest model. This model produces the best holdout sample R-squared value for this dataset and forces parallelization across multiple virtual cores, maximizing our model's prediction capability in the fastest way possible. Further, it exclusively uses local resources, which can be a benefit in some cases. I would also want to include a warning for users to be prompted once the analysis begins, informing them of the time this takes to complete.  
