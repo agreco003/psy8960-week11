@@ -107,9 +107,9 @@ gb_time_original <- system.time({
 
 ## Parallelization
 detectCores() #detect the number of cores on laptop #detectcores() - 1, just in case
-### OLS Regression Model
 local_cluster <- makeCluster(7)
 registerDoParallel(local_cluster)
+### OLS Regression Model
 ols_time_parallel <- system.time({
   linear_model <- train(
     workhours ~ ., 
