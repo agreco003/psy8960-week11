@@ -1,5 +1,4 @@
 # Script Settings and Resources
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 library(tidyverse)
 library(caret)
 library(haven)
@@ -206,5 +205,5 @@ table3_tbl <- tibble(algo = results$models, cv_rsq, ho_rsq) %>%
          ho_rsq = str_remove(format(round(ho_rsq, 2), nsmall = 2), "^0"))
 write.csv(table3_tbl, "table3.csv")
 
-table4_tbl <- tibble(model = model_list, supercomputer = original, "supercomputer-10" = parallelized)
+table4_tbl <- tibble(algo = results$models, supercomputer = original, "supercomputer-10" = parallelized)
 write.csv(table4_tbl, "table4.csv")

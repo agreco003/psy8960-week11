@@ -209,5 +209,5 @@ table1_tbl <- tibble(algo = results$models, cv_rsq, ho_rsq) %>%
          ho_rsq = str_remove(format(round(ho_rsq, 2), nsmall = 2), "^0"))
 table1_tbl
 
-table2_tbl <- tibble(algo = results$models, "original" = original, parallelized)
+table2_tbl <- tibble(algo = results$models, original = original, parallelized)
 table2_tbl
