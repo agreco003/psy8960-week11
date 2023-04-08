@@ -1,0 +1,5 @@
+algo,cv_rsq,ho_rsq
+Linear,.56,.03
+ElasticNet,.56,.08
+RandomForest,.87,.27
+GradientBoosting,.91,.24

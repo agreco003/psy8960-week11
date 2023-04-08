@@ -1,4 +1,4 @@
-#Script Settings and Resources
+# Script Settings and Resources
 library(tidyverse)
 library(caret)
 library(haven)
@@ -103,7 +103,7 @@ gb_time_original <- system.time({
 
 ## Parallelization
 detectCores()
-local_cluster <- makeCluster(12) #spreading across 12 cores!
+local_cluster <- makeCluster(12) #spreading across 12 cores! Could use more if desired. 
 registerDoParallel(local_cluster)
 ### OLS Regression Model
 ols_time_parallel <- system.time({
