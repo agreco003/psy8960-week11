@@ -1,4 +1,4 @@
-# Script Settings and Resources
+#Script Settings and Resources
 library(tidyverse)
 library(caret)
 library(haven)
@@ -103,9 +103,9 @@ gb_time_original <- system.time({
 
 ## Parallelization
 detectCores()
-### OLS Regression Model
-local_cluster <- makeCluster(16) #spreading across 16! Same as in batch request.
+local_cluster <- makeCluster(12) #spreading across 12 cores!
 registerDoParallel(local_cluster)
+### OLS Regression Model
 ols_time_parallel <- system.time({
   linear_model <- train(
     workhours ~ ., 
@@ -203,7 +203,7 @@ parallelized <-c(ols_time_parallel[3], en_time_parallel[3], rf_time_parallel[3],
 table3_tbl <- tibble(algo = results$models, cv_rsq, ho_rsq) %>%
   mutate(cv_rsq = str_remove(format(round(cv_rsq, 2), nsmall = 2), "^0"),
          ho_rsq = str_remove(format(round(ho_rsq, 2), nsmall = 2), "^0"))
-write.csv(table3_tbl, "table3.csv")
+write_csv(table3_tbl, "table3.csv")
 
-table4_tbl <- tibble(algo = results$models, supercomputer = original, "supercomputer-10" = parallelized)
-write.csv(table4_tbl, "table4.csv")
+table4_tbl <- tibble(algo = results$models, supercomputer = original, 'supercomputer-12' = parallelized)
+write_csv(table4_tbl, "table4.csv")
