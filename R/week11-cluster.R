@@ -104,7 +104,7 @@ gb_time_original <- system.time({
 
 ## Virtual Cores
 detectCores()
-local_cluster <- makeCluster(12) #spreading across 12 virtual cores! Could use more if desired. 
+local_cluster <- makeCluster(12) #spreading across 12 virtual cores! Could use more if desired, up to 128 for amdsmall. See https://www.msi.umn.edu/partitions. Must match the number in Table 4 and the sh script 
 registerDoParallel(local_cluster)
 ### OLS Regression Model
 ols_time_parallel <- system.time({
