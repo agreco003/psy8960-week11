@@ -38,11 +38,12 @@ ols_time_original <- system.time({
       verboseIter = TRUE
     )
   )
-  linear_model
-  linear_predict <- predict(linear_model, holdout_tbl, na.action=na.pass)
-  r2_linear_holdout <- cor(holdout_tbl$workhours, linear_predict)^2
-  r2_linear_holdout
 })
+linear_model
+linear_predict <- predict(linear_model, holdout_tbl, na.action=na.pass)
+r2_linear_holdout <- cor(holdout_tbl$workhours, linear_predict)^2
+r2_linear_holdout
+
 ### Elastic Net Model
 en_time_original <- system.time({
   en_model <- train(
@@ -58,11 +59,12 @@ en_time_original <- system.time({
       verboseIter = TRUE
     )
   )
-  en_model
-  en_predict <- predict(en_model, holdout_tbl, na.action=na.pass)
-  r2_en_holdout <- cor(holdout_tbl$workhours, en_predict)^2
-  r2_en_holdout
 })
+en_model
+en_predict <- predict(en_model, holdout_tbl, na.action=na.pass)
+r2_en_holdout <- cor(holdout_tbl$workhours, en_predict)^2
+r2_en_holdout
+
 ### Random Forest Model
 rf_time_original <- system.time({
   rf_model <- train(
@@ -78,12 +80,12 @@ rf_time_original <- system.time({
       verboseIter = TRUE
     )
   )
-  
-  rf_model
-  rf_predict <- predict(rf_model, holdout_tbl, na.action=na.pass)
-  r2_rf_holdout <- cor(holdout_tbl$workhours, rf_predict)^2
-  r2_rf_holdout
 })
+rf_model
+rf_predict <- predict(rf_model, holdout_tbl, na.action=na.pass)
+r2_rf_holdout <- cor(holdout_tbl$workhours, rf_predict)^2
+r2_rf_holdout
+
 ### eXtreme Gradient Boosting Model
 gb_time_original <- system.time({
   gb_model <- train(
@@ -99,11 +101,11 @@ gb_time_original <- system.time({
       verboseIter = TRUE
     )
   )
-  gb_model
-  gb_predict <- predict(gb_model, holdout_tbl, na.action=na.pass)
-  r2_gb_holdout <- cor(holdout_tbl$workhours, gb_predict)^2
-  r2_gb_holdout
 })
+gb_model
+gb_predict <- predict(gb_model, holdout_tbl, na.action=na.pass)
+r2_gb_holdout <- cor(holdout_tbl$workhours, gb_predict)^2
+r2_gb_holdout
 
 ## Parallelization
 detectCores() #detect the number of cores on laptop
@@ -123,11 +125,11 @@ ols_time_parallel <- system.time({
       verboseIter = TRUE
     )
   )
-  linear_model
-  linear_predict <- predict(linear_model, holdout_tbl, na.action=na.pass)
-  r2_linear_holdout <- cor(holdout_tbl$workhours, linear_predict)^2
-  r2_linear_holdout
 })
+linear_model
+linear_predict <- predict(linear_model, holdout_tbl, na.action=na.pass)
+r2_linear_holdout <- cor(holdout_tbl$workhours, linear_predict)^2
+r2_linear_holdout
 ### Elastic Net Model
 en_time_parallel <- system.time({
   en_model <- train(
@@ -143,11 +145,12 @@ en_time_parallel <- system.time({
       verboseIter = TRUE
     )
   )
-  en_model
-  en_predict <- predict(en_model, holdout_tbl, na.action=na.pass)
-  r2_en_holdout <- cor(holdout_tbl$workhours, en_predict)^2
-  r2_en_holdout
 })
+en_model
+en_predict <- predict(en_model, holdout_tbl, na.action=na.pass)
+r2_en_holdout <- cor(holdout_tbl$workhours, en_predict)^2
+r2_en_holdout
+
 ### Random Forest Model
 rf_time_parallel <- system.time({
   rf_model <- train(
@@ -163,18 +166,18 @@ rf_time_parallel <- system.time({
       verboseIter = TRUE
     )
   )
-  
-  rf_model
-  rf_predict <- predict(rf_model, holdout_tbl, na.action=na.pass)
-  r2_rf_holdout <- cor(holdout_tbl$workhours, rf_predict)^2
-  r2_rf_holdout
 })
+rf_model
+rf_predict <- predict(rf_model, holdout_tbl, na.action=na.pass)
+r2_rf_holdout <- cor(holdout_tbl$workhours, rf_predict)^2
+r2_rf_holdout
+
 ### eXtreme Gradient Boosting Model
 gb_time_parallel <- system.time({
   gb_model <- train(
     workhours ~ .,
     data = train_tbl,
-    method = "xgbLinear",
+    method = "xgbTree",
     tuneLength = 5,
     na.action = "na.pass",
     preProcess = "medianImpute",
@@ -184,11 +187,12 @@ gb_time_parallel <- system.time({
       verboseIter = TRUE
     )
   )
-  gb_model
-  gb_predict <- predict(gb_model, holdout_tbl, na.action=na.pass)
-  r2_gb_holdout <- cor(holdout_tbl$workhours, gb_predict)^2
-  r2_gb_holdout
 })
+gb_model
+gb_predict <- predict(gb_model, holdout_tbl, na.action=na.pass)
+r2_gb_holdout <- cor(holdout_tbl$workhours, gb_predict)^2
+r2_gb_holdout
+### End Parallelization
 stopCluster(local_cluster) #closes clusters
 registerDoSEQ() #back to original setup
 

@@ -34,11 +34,11 @@ ols_time_original <- system.time({
       verboseIter = TRUE
     )
   )
+})
   linear_model
   linear_predict <- predict(linear_model, holdout_tbl, na.action=na.pass)
   r2_linear_holdout <- cor(holdout_tbl$workhours, linear_predict)^2
   r2_linear_holdout
-})
 ### Elastic Net Model
 en_time_original <- system.time({
   en_model <- train(
@@ -54,11 +54,12 @@ en_time_original <- system.time({
       verboseIter = TRUE
     )
   )
+})
   en_model
   en_predict <- predict(en_model, holdout_tbl, na.action=na.pass)
   r2_en_holdout <- cor(holdout_tbl$workhours, en_predict)^2
   r2_en_holdout
-})
+  
 ### Random Forest Model
 rf_time_original <- system.time({
   rf_model <- train(
@@ -74,12 +75,12 @@ rf_time_original <- system.time({
       verboseIter = TRUE
     )
   )
-  
+})
   rf_model
   rf_predict <- predict(rf_model, holdout_tbl, na.action=na.pass)
   r2_rf_holdout <- cor(holdout_tbl$workhours, rf_predict)^2
   r2_rf_holdout
-})
+  
 ### eXtreme Gradient Boosting Model
 gb_time_original <- system.time({
   gb_model <- train(
@@ -95,15 +96,15 @@ gb_time_original <- system.time({
       verboseIter = TRUE
     )
   )
+})
   gb_model
   gb_predict <- predict(gb_model, holdout_tbl, na.action=na.pass)
   r2_gb_holdout <- cor(holdout_tbl$workhours, gb_predict)^2
   r2_gb_holdout
-})
 
-## Parallelization
+## Virtual Cores
 detectCores()
-local_cluster <- makeCluster(12) #spreading across 12 cores! Could use more if desired. 
+local_cluster <- makeCluster(12) #spreading across 12 virtual cores! Could use more if desired. 
 registerDoParallel(local_cluster)
 ### OLS Regression Model
 ols_time_parallel <- system.time({
@@ -185,6 +186,7 @@ gb_time_parallel <- system.time({
   r2_gb_holdout <- cor(holdout_tbl$workhours, gb_predict)^2
   r2_gb_holdout
 })
+### End Virtual Cores
 stopCluster(local_cluster)
 registerDoSEQ()
 
